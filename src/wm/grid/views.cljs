@@ -30,5 +30,10 @@
         [editable-cell {:row i :column j}])])
    [:div.mt-4
     [:button.bg-gray-200.py-1.px-4.ml-4
-     {:type "button"}
-     "Play"]]])
+     {:type "button"
+      :on-click #(rf/dispatch [::events/play-button-clicked])}
+     "Play"]
+    [:button.bg-gray-200.py-1.px-4.ml-4
+     {:type "button"
+      :on-click #(rf/dispatch [::events/stop-button-clicked])}
+     "Stop"]]])
