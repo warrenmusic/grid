@@ -1,0 +1,13 @@
+{
+  "name": "grid",
+  "private": true,
+  "dependencies": {
+    "react": "16.13.0",
+    "react-dom": "16.13.0",
+    "tailwindcss": "^1.2.0",
+    "tone": "^13.8.25"
+  },
+  "scripts": {
+    "build-css": "tailwindcss build src/main.css -o target/dev/public/css/main.css"
+  }
+}
