@@ -44,8 +44,7 @@
 
 (defn- handle-degree [cell s]
   (-> cell
-      (update :degree #(some-> (str % s)
-                               (js/Number.parseInt)))
+      (update :degree #(some-> (str % s) (js/Number.parseInt)))
       (dissoc :chord-quality :chord-root)))
 
 (defn- handle-transpose [cell s]
@@ -54,10 +53,16 @@
       (dissoc :chord-quality :chord-root)))
 
 (defn- handle-chord [cell s]
-  (-> cell
-      (dissoc :degree :transpose)
-      (assoc :chord-quality (if (lower-case? s) :minor :major)
-             :chord-root (numeral->integer s))))
+  (let [quality (if (lower-case? s) :minor :major)
+        numeral (cond-> (str (:chord-numeral cell) s)
+                  :always (-> (numeral->integer) (integer->numeral))
+                  (= :minor quality) (string/lower-case)
+                  (= :major quality) (string/upper-case))]
+    (-> cell
+        (dissoc :degree :transpose)
+        (assoc :chord-quality quality
+               :chord-root (numeral->integer numeral)
+               :chord-numeral numeral))))
 
 (defn- handle-backspace [cell]
   (cond
@@ -69,27 +74,27 @@
                                   (js/Number.parseInt)))
     (:transpose cell)
     (update cell :transpose #(non-zero ((if (pos? %) dec inc) %)))
+    (:chord-numeral cell)
+    (let [numeral (subs (:chord-numeral cell) 0 (dec (count (:chord-numeral cell))))]
+      (assoc cell
+             :chord-numeral (non-blank numeral)
+             :chord-root (non-zero (numeral->integer numeral))))
     :else cell))
 
 (defn- transpose-str [cell]
   (when-let [n (:transpose cell)]
     (string/join (repeat (js/Math.abs n) (if (pos? n) "+" "-")))))
 
-(defn- chord-str [cell]
-  (when (:chord-quality cell)
-    (cond-> (integer->numeral (:chord-root cell))
-      (= :minor (:chord-quality cell)) (string/lower-case))))
-
 (defn- update-cell-display-value [cell]
   (assoc cell :display-value (str (transpose-str cell)
                                   (:degree cell)
-                                  (chord-str cell))))
+                                  (:chord-numeral cell))))
 
 (defn update-cell [cell s]
   (-> (cond
         (some? (re-matches #"[0-9]" s)) (handle-degree cell s)
         (some? (re-matches #"[\+\-]" s)) (handle-transpose cell s)
-        (some? (re-matches #"[iIvV]" s)) (handle-chord cell s)
+        (some? (re-matches #"[iIvVxX]" s)) (handle-chord cell s)
         (= "Backspace" s) (handle-backspace cell)
         :else cell)
       (update-cell-display-value)))
