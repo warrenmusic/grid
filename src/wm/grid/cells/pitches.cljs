@@ -12,9 +12,10 @@
 (defn transpose [p semitones]
   (let [{:keys [class octave]} (pitch p)
         current-octave-index (first (positions #{class} pitch-classes))
-        delta-semitones (mod semitones 12)
+        delta-semitones (if (pos? semitones) (mod semitones 12) (- 0 (mod (js/Math.abs semitones) 12)))
         delta-octaves (cond-> ((if (pos? semitones) js/Math.floor js/Math.ceil) (/ semitones 12))
-                        (> (+ current-octave-index delta-semitones) 11) (inc))]
+                        (> (+ current-octave-index delta-semitones) 11) (inc)
+                        (< (+ current-octave-index delta-semitones) 0) (dec))]
     (str (get pitch-classes (mod (+ current-octave-index delta-semitones) 12))
          (+ octave delta-octaves))))
 

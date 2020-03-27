@@ -63,6 +63,9 @@
                :chord-root (numeral->integer numeral)
                :chord-numeral numeral))))
 
+(defn- handle-accidental [cell s]
+  (assoc cell :accidental (if (= "b" s) :flat :sharp)))
+
 (defn- handle-backspace [cell]
   (cond
     (:degree cell)
@@ -84,8 +87,12 @@
   (when-let [n (:transpose cell)]
     (string/join (repeat (js/Math.abs n) (if (pos? n) "+" "-")))))
 
+(defn- accidental-str [cell]
+  ({:flat "b" :sharp "#"} (:accidental cell)))
+
 (defn- update-cell-display-value [cell]
   (assoc cell :display-value (str (transpose-str cell)
+                                  (accidental-str cell)
                                   (:degree cell)
                                   (:chord-numeral cell))))
 
@@ -94,6 +101,7 @@
         (some? (re-matches #"[0-9]" s)) (handle-degree cell s)
         (some? (re-matches #"[\+\-]" s)) (handle-transpose cell s)
         (some? (re-matches #"[iIvVxX]" s)) (handle-chord cell s)
+        (some? (re-matches #"[b#]" s)) (handle-accidental cell s)
         (= "Backspace" s) (handle-backspace cell)
         :else cell)
       (update-cell-display-value)))
@@ -102,6 +110,8 @@
   (cond-> cell
     (and (some? (:transpose cell)) (nil? (:chord-root cell)) (nil? (:degree cell)))
     (dissoc :transpose)
+    (and (some? (:accidental cell)) (nil? (:chord-root cell)) (nil? (:degree cell)))
+    (dissoc :accidental)
     :always (update-cell-display-value)))
 
 ;; TODO: Use an ordered map for cells/sequence
@@ -112,7 +122,9 @@
          sequence nil]
     (if cell
       (let [transposed-base-pitch (pitches/transpose base-pitch (* 12 (:transpose cell)))
-            root (pitches/transpose transposed-base-pitch (get-in degrees/semitones [:major (or (:degree cell) (:chord-root cell))]))]
+            root (pitches/transpose transposed-base-pitch (cond-> (get-in degrees/semitones [:major (or (:degree cell) (:chord-root cell))])
+                                                            (= :flat (:accidental cell)) (dec)
+                                                            (= :sharp (:accidental cell)) (inc)))]
         (recur transposed-base-pitch
                cells
                (assoc sequence i (if (:chord-root cell)
