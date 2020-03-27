@@ -11,7 +11,16 @@
 
 (defn transpose [p semitones]
   (let [{:keys [class octave]} (pitch p)
-        delta-octaves ((if (pos? semitones) js/Math.floor js/Math.ceil) (/ semitones 12))
-        delta-semitones (mod semitones 12)]
-    (str (get pitch-classes (+ (first (positions #{class} pitch-classes)) delta-semitones))
+        current-octave-index (first (positions #{class} pitch-classes))
+        delta-semitones (mod semitones 12)
+        delta-octaves (cond-> ((if (pos? semitones) js/Math.floor js/Math.ceil) (/ semitones 12))
+                        (> (+ current-octave-index delta-semitones) 11) (inc))]
+    (str (get pitch-classes (mod (+ current-octave-index delta-semitones) 12))
          (+ octave delta-octaves))))
+
+(def ^:private chord-semitones
+  {:major [0 4 7]
+   :minor [0 3 7]})
+
+(defn triad-chord [root quality]
+  (mapv #(transpose root %) (chord-semitones quality)))

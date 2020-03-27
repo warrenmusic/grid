@@ -49,8 +49,7 @@
 
 (defn- handle-transpose [cell s]
   (-> cell
-      (update :transpose (comp non-zero (if (= "+" s) inc dec)))
-      (dissoc :chord-quality :chord-root)))
+      (update :transpose (comp non-zero (if (= "+" s) inc dec)))))
 
 (defn- handle-chord [cell s]
   (let [quality (if (lower-case? s) :minor :major)
@@ -59,7 +58,7 @@
                   (= :minor quality) (string/lower-case)
                   (= :major quality) (string/upper-case))]
     (-> cell
-        (dissoc :degree :transpose)
+        (dissoc :degree)
         (assoc :chord-quality quality
                :chord-root (numeral->integer numeral)
                :chord-numeral numeral))))
@@ -101,16 +100,22 @@
 
 (defn finalize-cell [cell]
   (cond-> cell
-    (and (some? (:transpose cell)) (nil? (:degree cell))) (dissoc :transpose)
+    (and (some? (:transpose cell)) (nil? (:chord-root cell)) (nil? (:degree cell)))
+    (dissoc :transpose)
     :always (update-cell-display-value)))
 
-(defn- pitches* [base-pitch [[i cell] & cells] pitches]
-  (if cell
-    (let [transposed-base-pitch (pitches/transpose base-pitch (* 12 (:transpose cell)))]
-      (recur transposed-base-pitch
-             cells
-             (assoc pitches i (pitches/transpose transposed-base-pitch
-                                                 (get-in degrees/semitones [:major (:degree cell)])))))
-    pitches))
+;; TODO: Use an ordered map for cells/sequence
 
-(defn pitches [base-pitch cells] (pitches* base-pitch cells nil))
+(defn cells->sequence [base-pitch cells]
+  (loop [base-pitch base-pitch
+         [[i cell] & cells] cells
+         sequence nil]
+    (if cell
+      (let [transposed-base-pitch (pitches/transpose base-pitch (* 12 (:transpose cell)))
+            root (pitches/transpose transposed-base-pitch (get-in degrees/semitones [:major (or (:degree cell) (:chord-root cell))]))]
+        (recur transposed-base-pitch
+               cells
+               (assoc sequence i (if (:chord-root cell)
+                                   (pitches/triad-chord root (:chord-quality cell))
+                                   root))))
+      sequence)))

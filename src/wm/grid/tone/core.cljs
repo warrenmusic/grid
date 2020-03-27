@@ -3,7 +3,7 @@
 
 ;; TODO: Schedule audio events after tone/start
 
-(defonce ^:private synth (.toMaster (tone/Synth.)))
+(defonce ^:private synth (.toMaster (tone/PolySynth. 3 tone/Synth)))
 
 (defn play! [{:keys [length on-trigger]}]
   (let [sequence (tone/Sequence. on-trigger (clj->js (range 0 length)) "16n")]
@@ -16,3 +16,6 @@
 
 (defn play-note! [pitch length time]
   (.triggerAttackRelease synth pitch length time))
+
+(defn play-chord! [pitches length time]
+  (.triggerAttackRelease synth (clj->js pitches) length time))

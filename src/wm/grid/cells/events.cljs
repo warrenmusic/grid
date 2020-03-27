@@ -16,7 +16,7 @@
        {:db (-> db
                 (assoc-in [:cells (:selected-cell-index db)] (cells/finalize-cell updated-cell))
                 (assoc :editing-cell updated-cell)
-                (as-> db (assoc db :pitches (cells/pitches "C4" (:cells db)))))}))))
+                (as-> db (assoc db :sequence (cells/cells->sequence "C4" (:cells db)))))}))))
 
 (rf/reg-event-fx
  ::cell-clicked

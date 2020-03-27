@@ -17,3 +17,8 @@
  ::play-note
  (fn [{:keys [pitch length time]}]
    (tone/play-note! pitch length time)))
+
+(rf/reg-fx
+ ::play-chord
+ (fn [{:keys [pitches length time]}]
+   (tone/play-chord! pitches length time)))
