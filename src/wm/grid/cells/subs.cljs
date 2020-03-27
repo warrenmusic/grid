@@ -15,3 +15,8 @@
  ::editing-cell-display-value
  (fn [db _]
    (get-in db [:editing-cell :display-value])))
+
+(rf/reg-sub
+ ::bars
+ (fn [db _]
+   (:bars db)))

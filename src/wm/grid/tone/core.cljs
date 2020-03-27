@@ -5,18 +5,14 @@
 
 (defonce ^:private synth (.toMaster (tone/Synth.)))
 
-(defn play! [pitches]
-  (prn "pitches" pitches)
-  (let [sequence (tone/Sequence.
-                  (fn [time position]
-                    (prn "position" position)
-                    (when-let [pitch (get pitches position)]
-                      (.triggerAttackRelease synth pitch "16n" time)))
-                  (clj->js (range 0 16))
-                  "16n")]
+(defn play! [{:keys [length on-trigger]}]
+  (let [sequence (tone/Sequence. on-trigger (clj->js (range 0 length)) "16n")]
     (.start sequence 0)
     (.start tone/Transport)))
 
 (defn stop! []
   (.stop tone/Transport)
   (.cancel tone/Transport))
+
+(defn play-note! [pitch length time]
+  (.triggerAttackRelease synth pitch length time))

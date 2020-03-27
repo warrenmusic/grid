@@ -13,9 +13,10 @@
      display-value]))
 
 (defn cells []
-  (let [selected-cell-index @(rf/subscribe [::subs/selected-cell-index])]
+  (let [selected-cell-index @(rf/subscribe [::subs/selected-cell-index])
+        bars @(rf/subscribe [::subs/bars])]
     [:div
-     (for [i (range 0 4)
+     (for [i (range 0 bars)
            :let [first-col-index (* 16 i)]]
        ^{:key i}
        [:div.flex
