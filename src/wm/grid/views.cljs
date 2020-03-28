@@ -16,7 +16,7 @@
       text])])
 
 (defn root []
-  [:div.absolute.w-full.h-full.flex.justify-center.items-center
+  [:div.absolute.w-full.min-h-screen.flex.justify-center.items-center.py-8
    [:div
     [meter-row]
     [cells.views/cells]

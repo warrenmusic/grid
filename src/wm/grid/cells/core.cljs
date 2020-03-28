@@ -3,12 +3,9 @@
   event and provides a new pitch value and a display value."
   (:require [clojure.string :as string]
             [clojure.spec.alpha :as spec]
+            [wm.grid.utils :refer [non-blank non-zero lower-case?]]
             [wm.grid.cells.pitches :as pitches]
             [wm.grid.cells.degrees :as degrees]))
-
-(defn- non-blank [s] (when-not (string/blank? s) s))
-(defn- non-zero [n] (when-not (= 0 n) n))
-(defn- lower-case? [s] (= s (string/lower-case s)))
 
 (defn- numeral->integer [s]
   (loop [i 0 s (string/upper-case s)]
