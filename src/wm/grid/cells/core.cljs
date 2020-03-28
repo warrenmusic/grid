@@ -71,6 +71,8 @@
                                   (subs 0 (dec (count (str %))))
                                   (non-blank)
                                   (js/Number.parseInt)))
+    (:accidental cell)
+    (dissoc cell :accidental)
     (:transpose cell)
     (update cell :transpose #(non-zero ((if (pos? %) dec inc) %)))
     (:chord-numeral cell)
