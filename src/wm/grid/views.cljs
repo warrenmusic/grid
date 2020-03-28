@@ -1,6 +1,7 @@
 (ns wm.grid.views
   (:require [clojure.string :as string]
             [re-frame.core :as rf]
+            [wm.grid.pitches :as pitches]
             [wm.grid.cells.views :as cells.views]
             [wm.grid.events :as events]
             [wm.grid.subs :as subs]))
@@ -17,14 +18,29 @@
 
 (defn- play-controls []
   [:div.bg-gray-200.p-2.w-64
-   [:button.bg-gray-300.py-1.px-4
+   [:button.bg-gray-300.py-1.px-4.font-medium
     {:type "button"
      :on-click #(rf/dispatch [::events/play-button-clicked])}
     "Play"]
-   [:button.bg-gray-300.py-1.px-4.ml-2
+   [:button.bg-gray-300.py-1.px-4.ml-2.font-medium
     {:type "button"
      :on-click #(rf/dispatch [::events/stop-button-clicked])}
     "Stop"]])
+
+(def ^:private base-pitch-options
+  ["A3" "A#3" "B3" "C4" "C#4" "D4" "D#4" "E4" "F4" "F#4" "G4" "G#4"])
+
+(defn- tonic-select []
+  (let [selected-base-pitch @(rf/subscribe [::subs/base-pitch])]
+    [:div.bg-gray-200.p-2.w-64.mt-4
+     [:select.w-full
+      {:value selected-base-pitch
+       :on-change #(rf/dispatch [::events/base-pitch-changed (.-target.value %)])}
+      (for [base-pitch base-pitch-options]
+        ^{:key base-pitch}
+        [:option
+         {:value base-pitch}
+         "Key of " (:class (pitches/pitch base-pitch)) " Major"])]]))
 
 (defn root []
   [:div.absolute.w-full.min-h-screen.p-8
@@ -32,4 +48,5 @@
     [meter-row]
     [cells.views/cells]]
    [:div.absolute.top-0.right-0.mt-8.mr-8
-    [play-controls]]])
+    [play-controls]
+    [tonic-select]]])

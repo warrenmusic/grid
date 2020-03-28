@@ -1,4 +1,4 @@
-(ns wm.grid.cells.pitches
+(ns wm.grid.pitches
   (:require [wm.grid.utils :refer [positions]]))
 
 (defn pitch [s]

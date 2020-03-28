@@ -6,7 +6,8 @@
 (rf/reg-event-fx
  ::initialize
  (fn [_ _]
-   {:db {:bars 18}}))
+   {:db {:bars 18
+         :base-pitch "C4"}}))
 
 (rf/reg-event-fx
  ::play-button-clicked
@@ -35,3 +36,10 @@
        {::tone.fx/play-note {:pitch pitch
                              :length "16n"
                              :time time}}))))
+
+(rf/reg-event-fx
+ ::base-pitch-changed
+ (fn [{:keys [db]} [_ base-pitch]]
+   {:db (assoc db
+               :base-pitch base-pitch
+               :sequence (cells/cells->sequence base-pitch (:cells db)))}))

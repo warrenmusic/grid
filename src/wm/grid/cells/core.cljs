@@ -4,7 +4,7 @@
   (:require [clojure.string :as string]
             [clojure.spec.alpha :as spec]
             [wm.grid.utils :refer [non-blank non-zero lower-case?]]
-            [wm.grid.cells.pitches :as pitches]
+            [wm.grid.pitches :as pitches]
             [wm.grid.cells.degrees :as degrees]))
 
 (defn- numeral->integer [s]
