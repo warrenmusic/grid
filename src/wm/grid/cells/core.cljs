@@ -113,17 +113,16 @@
     (dissoc :accidental)
     :always (update-cell-display-value)))
 
-;; TODO: Use an ordered map for cells/sequence
-
 (defn cells->sequence [base-pitch cells]
   (loop [base-pitch base-pitch
-         [[i cell] & cells] cells
+         [[i cell] & cells] (sort-by key cells)
          sequence nil]
     (if cell
       (let [transposed-base-pitch (pitches/transpose base-pitch (* 12 (:transpose cell)))
-            root (pitches/transpose transposed-base-pitch (cond-> (get-in degrees/semitones [:major (or (:degree cell) (:chord-root cell))])
-                                                            (= :flat (:accidental cell)) (dec)
-                                                            (= :sharp (:accidental cell)) (inc)))]
+            root (pitches/transpose transposed-base-pitch
+                                    (cond-> (degrees/degree->semitones (or (:chord-root cell) (:degree cell)))
+                                      (= :flat (:accidental cell)) (dec)
+                                      (= :sharp (:accidental cell)) (inc)))]
         (recur transposed-base-pitch
                cells
                (assoc sequence i (if (:chord-root cell)
