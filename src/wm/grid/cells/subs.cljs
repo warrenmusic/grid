@@ -20,3 +20,8 @@
  ::bars
  (fn [db _]
    (:bars db)))
+
+(rf/reg-sub
+ ::playing-cell-index
+ (fn [db _]
+   (:playing-cell-index db)))

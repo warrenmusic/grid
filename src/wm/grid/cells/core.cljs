@@ -118,14 +118,16 @@
          [[i cell] & cells] (sort-by key cells)
          sequence nil]
     (if cell
-      (let [transposed-base-pitch (pitches/transpose base-pitch (* 12 (:transpose cell)))
-            root (pitches/transpose transposed-base-pitch
-                                    (cond-> (degrees/degree->semitones (or (:chord-root cell) (:degree cell)))
-                                      (= :flat (:accidental cell)) (dec)
-                                      (= :sharp (:accidental cell)) (inc)))]
-        (recur transposed-base-pitch
-               cells
-               (assoc sequence i (if (:chord-root cell)
-                                   (pitches/triad-chord root (:chord-quality cell))
-                                   root))))
+      (if-let [root-degree (or (:chord-root cell) (:degree cell))]
+        (let [transposed-base-pitch (pitches/transpose base-pitch (* 12 (:transpose cell)))
+              root (pitches/transpose transposed-base-pitch
+                                      (cond-> (degrees/degree->semitones (or (:chord-root cell) (:degree cell)))
+                                        (= :flat (:accidental cell)) (dec)
+                                        (= :sharp (:accidental cell)) (inc)))]
+          (recur transposed-base-pitch
+                 cells
+                 (assoc sequence i (if (:chord-root cell)
+                                     (pitches/triad-chord root (:chord-quality cell))
+                                     root))))
+        (recur base-pitch cells sequence))
       sequence)))

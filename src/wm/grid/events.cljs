@@ -22,20 +22,24 @@
  ::stop-button-clicked
  (fn [{:keys [db]} _]
    (when (:playing? db)
-     {:db (assoc db :playing? false)
+     {:db (-> db
+              (assoc :playing? false)
+              (dissoc :playing-cell-index))
       ::tone.fx/stop nil})))
 
 (rf/reg-event-fx
  ::sequence-note-triggered
  (fn [{:keys [db]} [_ time index]]
-   (when-let [pitch (get-in db [:sequence index])]
-     (if (vector? pitch)
-       {::tone.fx/play-chord {:pitches pitch
-                              :length "16n"
-                              :time time}}
-       {::tone.fx/play-note {:pitch pitch
-                             :length "16n"
-                             :time time}}))))
+   (let [pitch (get-in db [:sequence index])]
+     (cond-> {:db (assoc db :playing-cell-index index)}
+       (vector? pitch)
+       (assoc ::tone.fx/play-chord {:pitches pitch
+                                    :length "16n"
+                                    :time time})
+       (string? pitch)
+       (assoc ::tone.fx/play-note {:pitch pitch
+                                   :length "16n"
+                                   :time time})))))
 
 (rf/reg-event-fx
  ::base-pitch-changed
