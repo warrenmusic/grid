@@ -1,13 +1,18 @@
 (ns wm.grid.events
   (:require [re-frame.core :as rf]
             [wm.grid.tone.fx :as tone.fx]
-            [wm.grid.cells.core :as cells]))
+            [wm.grid.cells.core :as cells]
+            [wm.grid.db :as db]))
+
+(def ^:private default-initial-state
+  {:bars 18
+   :base-pitch "C4"})
 
 (rf/reg-event-fx
  ::initialize
- (fn [_ _]
-   {:db {:bars 18
-         :base-pitch "C4"}}))
+ (fn [_ [_ initial-state]]
+   {:db (-> (or initial-state default-initial-state)
+            (as-> db (assoc db :sequence (cells/cells->sequence (:base-pitch db) (:cells db)))))}))
 
 (rf/reg-event-fx
  ::play-button-clicked
@@ -47,3 +52,8 @@
    {:db (assoc db
                :base-pitch base-pitch
                :sequence (cells/cells->sequence base-pitch (:cells db)))}))
+
+(rf/reg-event-fx
+ ::shareable-url-button-clicked
+ (fn [{:keys [db]} _]
+   {:db (assoc db :shareable-url (db/shareable-url db))}))

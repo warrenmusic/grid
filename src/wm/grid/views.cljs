@@ -17,12 +17,12 @@
       text])])
 
 (defn- play-controls []
-  [:div.bg-gray-200.p-2.w-64
-   [:button.bg-gray-300.py-1.px-4.font-medium
+  [:div.bg-gray-200.p-2.w-64.flex
+   [:button.bg-gray-300.py-1.px-4.font-medium.w-full
     {:type "button"
      :on-click #(rf/dispatch [::events/play-button-clicked])}
     "Play"]
-   [:button.bg-gray-300.py-1.px-4.ml-2.font-medium
+   [:button.bg-gray-300.py-1.px-4.ml-2.font-medium.w-full
     {:type "button"
      :on-click #(rf/dispatch [::events/stop-button-clicked])}
     "Stop"]])
@@ -42,6 +42,18 @@
          {:value base-pitch}
          "Key of " (:class (pitches/pitch base-pitch)) " Major"])]]))
 
+(defn- shareable-url []
+  (let [shareable-url @(rf/subscribe [::subs/shareable-url])]
+    [:div.bg-gray-200.p-2.w-64.mt-4
+     [:button.bg-gray-300.py-1.px-4.font-medium.w-full
+      {:type "button"
+       :on-click #(rf/dispatch [::events/shareable-url-button-clicked])}
+      "Get shareable URL"]
+     (when shareable-url
+       [:input.w-full.mt-2
+        {:read-only true
+         :value shareable-url}])]))
+
 (defn root []
   [:div.absolute.w-full.min-h-screen.p-8
    [:div
@@ -49,4 +61,5 @@
     [cells.views/cells]]
    [:div.absolute.top-0.right-0.mt-8.mr-8
     [play-controls]
-    [tonic-select]]])
+    [tonic-select]
+    [shareable-url]]])
