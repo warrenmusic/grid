@@ -1,6 +1,6 @@
 (ns wm.grid.cells.events
   (:require [re-frame.core :as rf]
-            [wm.grid.cells.core :as cells]))
+            [wm.grid.cells.db :as db]))
 
 (rf/reg-event-fx
  ::global-keyup-triggered
@@ -12,11 +12,11 @@
  ::cell-key-pressed
  (fn [{:keys [db]} [_ {:keys [key]}]]
    (when (:selected-cell-index db)
-     (let [updated-cell (cells/update-cell (:editing-cell db) key)]
+     (let [updated-cell (db/update-cell (:editing-cell db) key)]
        {:db (-> db
-                (assoc-in [:cells (:selected-cell-index db)] (cells/finalize-cell updated-cell))
+                (assoc-in [:cells (:selected-cell-index db)] (db/finalize-cell updated-cell))
                 (assoc :editing-cell updated-cell)
-                (as-> db (assoc db :sequence (cells/cells->sequence (:base-pitch db) (:cells db)))))}))))
+                (as-> db (assoc db :sequence (db/cells->sequence (:base-pitch db) (:cells db)))))}))))
 
 (rf/reg-event-fx
  ::cell-clicked

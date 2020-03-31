@@ -1,11 +1,7 @@
-(ns wm.grid.cells.core
-  "A cell is a state machine that takes a single character of user input as an
-  event and provides a new pitch value and a display value."
+(ns wm.grid.cells.db
   (:require [clojure.string :as string]
-            [clojure.spec.alpha :as spec]
             [wm.grid.utils :refer [non-blank non-zero lower-case?]]
-            [wm.grid.pitches :as pitches]
-            [wm.grid.cells.degrees :as degrees]))
+            [wm.grid.pitches :as pitches]))
 
 (defn- numeral->integer [s]
   (loop [i 0 s (string/upper-case s)]
@@ -29,15 +25,7 @@
         (>= i 1) (recur (- i 1) (str s "I")))
       s)))
 
-(spec/def ::degree (spec/and int? pos?))
-
-(spec/def ::transpose (spec/and int? non-zero))
-
-(spec/def ::display-value string?)
-
-(spec/def ::cell (spec/keys :opt-un [::degree
-                                     ::transpose
-                                     ::display-value]))
+;; Cell Input Handlers
 
 (defn- handle-degree [cell s]
   (-> cell
@@ -113,6 +101,24 @@
     (dissoc :accidental)
     :always (update-cell-display-value)))
 
+;; Pitch Generation
+
+(def ^:private degree-semitones
+  {1 0
+   2 2
+   3 4
+   4 5
+   5 7
+   6 9
+   7 11
+   8 12})
+
+(defn- degree->semitones
+  [n]
+  {:pre [(and (int? n) (pos? n))]}
+  (let [octaves (js/Math.floor (/ n 8))]
+    (+ (* 12 octaves) (get degree-semitones (cond-> (mod n 8) (> n 8) (inc))))))
+
 (defn cells->sequence [base-pitch cells]
   (loop [base-pitch base-pitch
          [[i cell] & cells] (sort-by key cells)
@@ -121,7 +127,7 @@
       (if-let [root-degree (or (:chord-root cell) (:degree cell))]
         (let [transposed-base-pitch (pitches/transpose base-pitch (* 12 (:transpose cell)))
               root (pitches/transpose transposed-base-pitch
-                                      (cond-> (degrees/degree->semitones (or (:chord-root cell) (:degree cell)))
+                                      (cond-> (degree->semitones (or (:chord-root cell) (:degree cell)))
                                         (= :flat (:accidental cell)) (dec)
                                         (= :sharp (:accidental cell)) (inc)))]
           (recur transposed-base-pitch
