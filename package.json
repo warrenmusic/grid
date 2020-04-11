@@ -8,6 +8,7 @@
     "tone": "^13.8.25"
   },
   "scripts": {
-    "build-css": "tailwindcss build src/main.css -o target/dev/public/css/main.css"
+      "build-css": "tailwindcss build src/main.css -o target/dev/public/css/main.css",
+      "release-css": "tailwindcss build src/main.css -o _jekyll/css/main.css"
   }
 }
