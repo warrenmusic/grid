@@ -13,8 +13,9 @@ _jekyll/css/main.css: node_modules
 
 .PHONY: release
 release: _jekyll/index.html _jekyll/js/main.js _jekyll/css/main.css
-	git checkout gh-pages
-	git commit -am "Release"
+	git checkout -m gh-pages
+	git add _jekyll
+	git commit -m "Release"
 	git push origin HEAD
 	git checkout master
 	make clean
