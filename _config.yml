@@ -1,1 +1,4 @@
-source: _jekyll
+exclude:
+  - Makefile
+  - README.md
+  - src

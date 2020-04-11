@@ -1,20 +1,20 @@
 node_modules:
 	npm install
 
-_jekyll/js/main.js: node_modules
+js/main.js: node_modules
 	./node_modules/.bin/shadow-cljs release app
 
-_jekyll/index.html:
+index.html:
 	mkdir -p _jekyll
-	cp src/public/index.html _jekyll/index.html
+	cp src/public/index.html index.html
 
-_jekyll/css/main.css: node_modules
+css/main.css: node_modules
 	npm run release-css
 
 .PHONY: release
-release: _jekyll/index.html _jekyll/js/main.js _jekyll/css/main.css
+release: index.html js/main.js css/main.css
 	git checkout -m gh-pages
-	git add _jekyll
+	git add .
 	git commit -m "Release"
 	git push origin HEAD
 	git checkout master
@@ -22,4 +22,4 @@ release: _jekyll/index.html _jekyll/js/main.js _jekyll/css/main.css
 
 .PHONY: clean
 clean:
-	rm -rf _jekyll
+	rm -rf css js index.html

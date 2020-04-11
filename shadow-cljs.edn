@@ -7,4 +7,4 @@
                 :output-dir "target/dev/public/js"
                 :asset-path "/js"
                 :modules {:main {:init-fn wm.grid.main/main!}}
-                :release {:output-dir "_jekyll/js"}}}}
+                :release {:output-dir "js"}}}}
