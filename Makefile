@@ -5,7 +5,6 @@ js/main.js: node_modules
 	./node_modules/.bin/shadow-cljs release app
 
 index.html:
-	mkdir -p _jekyll
 	cp src/public/index.html index.html
 
 css/main.css: node_modules

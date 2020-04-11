@@ -16,3 +16,12 @@ $ npm install
 $ npm run build-css
 $ npx shadow-cljs watch app
 ```
+
+Release
+-------
+
+To release to GitHub Pages, first commit all changes, then:
+
+```
+$ make release
+```
