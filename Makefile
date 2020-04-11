@@ -1,14 +1,14 @@
 node_modules:
-	nvm use && npm install
+	npm install
 
 _jekyll/js/main.js: node_modules
-	npx shadow-cljs release app
+	./node_modules/.bin/shadow-cljs release app
 
 _jekyll/index.html:
 	cp src/public/index.html _jekyll/index.html
 
 _jekyll/css/main.css: node_modules
-	nvm use && npm run release-css
+	npm run release-css
 
 .PHONY: release
 release: _jekyll/index.html _jekyll/js/main.js _jekyll/css/main.css
