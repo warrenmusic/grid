@@ -7,4 +7,5 @@
                 :output-dir "target/dev/public/js"
                 :asset-path "/js"
                 :modules {:main {:init-fn wm.grid.main/main!}}
-                :release {:output-dir "js"}}}}
+                :release {:output-dir "js"
+                          :asset-path "/grid/js"}}}}
