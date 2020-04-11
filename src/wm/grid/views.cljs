@@ -3,6 +3,7 @@
             [re-frame.core :as rf]
             [wm.grid.pitches :as pitches]
             [wm.grid.cells.views :as cells.views]
+            [wm.grid.parts.views :as parts.views]
             [wm.grid.events :as events]
             [wm.grid.subs :as subs]))
 
@@ -60,6 +61,7 @@
     [meter-row]
     [cells.views/cells]]
    [:div.absolute.top-0.right-0.mt-8.mr-8
+    #_[shareable-url]
     [play-controls]
     [tonic-select]
-    [shareable-url]]])
+    [parts.views/edit-parts-panel]]])

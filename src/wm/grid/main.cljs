@@ -20,5 +20,5 @@
 (defn main! []
   (add-global-event-listeners!)
   (rf/dispatch-sync [::events/initialize (initial-state-from-url)])
-  (set! (.-hash js/location) "")
+  #_(set! (.-hash js/location) "")
   (mount-root!))

@@ -2,6 +2,7 @@
   (:require [re-frame.core :as rf]
             [wm.grid.tone.fx :as tone.fx]
             [wm.grid.cells.db :as cells.db]
+            [wm.grid.parts.events :as parts.events]
             [wm.grid.db :as db]))
 
 (def ^:private default-initial-state
@@ -12,7 +13,8 @@
  ::initialize
  (fn [_ [_ initial-state]]
    {:db (-> (or initial-state default-initial-state)
-            (as-> db (assoc db :sequence (cells.db/cells->sequence (:base-pitch db) (:cells db)))))}))
+            (as-> db (assoc db :sequence (cells.db/cells->sequence (:base-pitch db) (:cells db)))))
+    :dispatch [::parts.events/initialize]}))
 
 (rf/reg-event-fx
  ::play-button-clicked
