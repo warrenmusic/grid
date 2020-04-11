@@ -13,10 +13,11 @@ css/main.css: node_modules
 
 .PHONY: release
 release: index.html js/main.js css/main.css
-	git checkout -m gh-pages
+	git branch -D gh-pages
+	git checkout -b gh-pages
 	git add .
 	git commit -m "Release"
-	git push origin HEAD
+	git push -f origin HEAD
 	git checkout master
 	make clean
 
