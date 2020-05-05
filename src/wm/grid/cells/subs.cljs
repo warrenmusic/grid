@@ -25,3 +25,14 @@
  ::playing-cell-index
  (fn [db _]
    (:playing-cell-index db)))
+
+(rf/reg-sub
+ ::parts
+ (fn [db _]
+   (vals (:parts db))))
+
+(rf/reg-sub
+ ::show-parts?
+ :<- [::parts]
+ (fn [parts _]
+   (> (count parts) 1)))

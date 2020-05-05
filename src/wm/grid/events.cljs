@@ -6,7 +6,7 @@
             [wm.grid.db :as db]))
 
 (def ^:private default-initial-state
-  {:bars 18
+  {:bars 4
    :base-pitch "C4"})
 
 (rf/reg-event-fx

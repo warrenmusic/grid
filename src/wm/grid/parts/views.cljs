@@ -8,15 +8,21 @@
    {:on-click #(rf/dispatch [::events/create-button-clicked])}
    "Add part"])
 
-(defn- edit-part [{:keys [id name]}]
+(defn- edit-part [{:keys [id name color]}]
   [:div.mb-2.flex
    [:div
     [:input.p-1.w-full
      {:type "text"
       :default-value name
       :on-change #(rf/dispatch [::events/name-updated {:id id :name (.-target.value %)}])}]]
+   [:input.w-10.h-8.ml-2
+    {:type "color"
+     :default-value color
+     :on-change #(rf/dispatch [::events/color-updated {:id id :color (.-target.value %)}])
+     :title "Choose color"}]
    [:button.bg-gray-300.px-3.ml-2.font-medium
-    {:on-click #(rf/dispatch [::events/delete-button-clicked {:id id}])}
+    {:on-click #(rf/dispatch [::events/delete-button-clicked {:id id}])
+     :title "Remove part"}
     "X"]])
 
 (defn- list-parts []

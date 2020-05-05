@@ -55,11 +55,16 @@
         {:read-only true
          :value shareable-url}])]))
 
+(defn- grid []
+  [:div.grid
+   {:style {:grid-template-columns "auto 1fr"}}
+   [:div]
+   [meter-row]
+   [cells.views/cells]])
+
 (defn root []
   [:div.absolute.w-full.min-h-screen.p-8
-   [:div
-    [meter-row]
-    [cells.views/cells]]
+   [grid]
    [:div.absolute.top-0.right-0.mt-8.mr-8
     #_[shareable-url]
     [play-controls]

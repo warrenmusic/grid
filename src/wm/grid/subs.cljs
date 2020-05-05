@@ -3,10 +3,10 @@
 
 (rf/reg-sub
  ::base-pitch
- (fn [db]
+ (fn [db _]
    (:base-pitch db)))
 
 (rf/reg-sub
  ::shareable-url
- (fn [db]
+ (fn [db _]
    (:shareable-url db)))
